@@ -1,0 +1,9 @@
+POST http://localhost:3003/api/blogs HTTP/1.1
+content-type: application/json
+
+{
+    "title": "An Interactive Guide to CSS Grid",
+    "author": "Josh Comeau",
+    "url": "https://www.joshwcomeau.com/css/interactive-guide-to-grid/",
+    "likes": 28403
+}
