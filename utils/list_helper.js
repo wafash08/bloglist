@@ -1,6 +1,6 @@
 /**
  *
- * @param {{content: string, author: string, url: string, likes: number}[]} blogs
+ * @param {{title: string, author: string, url: string, likes: number}[]} blogs
  * @returns {number}
  */
 export function dummy(blogs) {
@@ -8,7 +8,7 @@ export function dummy(blogs) {
 }
 /**
  *
- * @param {{content: string, author: string, url: string, likes: number}[]} blogs
+ * @param {{title: string, author: string, url: string, likes: number}[]} blogs
  * @returns {number}
  */
 export function totalLikes(blogs) {
@@ -16,4 +16,23 @@ export function totalLikes(blogs) {
 		// console.log('current blog likes >> ', blog.likes);
 		return sum + blog.likes;
 	}, 0);
+}
+/**
+ *
+ * @param {{title: string, author: string, url: string, likes: number}[]} blogs
+ * @returns {{title: string, author: string, likes: number}}
+ */
+export function favoriteBlog(blogs) {
+	const blogWithMostLikes = blogs.sort((a, b) => {
+		const likesOfA = a.likes;
+		const likesOfB = b.likes;
+		// descending
+		return likesOfB - likesOfA;
+	});
+
+	return {
+		title: blogWithMostLikes[0].title,
+		author: blogWithMostLikes[0].author,
+		likes: blogWithMostLikes[0].likes,
+	};
 }
