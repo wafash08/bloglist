@@ -112,4 +112,36 @@ export function mostBlogs(blogs) {
 	return sortByBlogs[0];
 }
 
-console.log(mostBlogs(BLOGS));
+/**
+ *
+ * @param {{title: string, author: string, url: string, likes: number}[]} blogs
+ * @returns {{ author: string, likes: number}}
+ */
+export function mostLikes(blogs) {
+	const authorsAndLikes = new Map();
+	for (const blog of blogs) {
+		if (authorsAndLikes.has(blog.author)) {
+			const obj = authorsAndLikes.get(blog.author);
+			authorsAndLikes.set(blog.author, {
+				...obj,
+				likes: obj.likes + blog.likes,
+			});
+		} else {
+			authorsAndLikes.set(blog.author, {
+				author: blog.author,
+				likes: blog.likes,
+			});
+		}
+	}
+	let authorWithMostLikes = { author: '', likes: 0 };
+	for (const [_, value] of authorsAndLikes) {
+		if (value.likes > authorWithMostLikes.likes) {
+			authorWithMostLikes = value;
+		} else {
+			continue;
+		}
+	}
+	return authorWithMostLikes;
+}
+
+console.log(mostLikes(BLOGS));

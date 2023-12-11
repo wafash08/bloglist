@@ -4,6 +4,7 @@ import {
 	mostBlogs,
 	totalLikes,
 	BLOGS,
+	mostLikes,
 } from '../utils/list_helper';
 
 test('dummy return one', () => {
@@ -54,8 +55,15 @@ describe('favorite blog', () => {
 });
 
 describe('most blogs', () => {
-	test('of author witsh most blogs', () => {
+	test('of author with most blogs', () => {
 		const result = mostBlogs(BLOGS);
 		expect(result).toEqual({ author: 'Robert C. Martin', blogs: 3 });
+	});
+});
+
+describe('most likes', () => {
+	test('of author with most likes', () => {
+		const result = mostLikes(BLOGS);
+		expect(result).toEqual({ author: 'Edsger W. Dijkstra', likes: 17 });
 	});
 });
