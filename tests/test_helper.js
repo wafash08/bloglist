@@ -1,3 +1,5 @@
+import { Blog } from '../models/blog';
+
 export const INITIAL_BLOGS = [
 	{
 		_id: '65758819ed299aacf87aa764',
@@ -16,3 +18,8 @@ export const INITIAL_BLOGS = [
 		__v: 0,
 	},
 ];
+
+export async function blogsInDB() {
+	const blogs = await Blog.find({});
+	return blogs.map(blog => blog.toJSON());
+}
