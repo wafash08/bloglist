@@ -9,7 +9,13 @@ blogRouter.get('/', async (request, response) => {
 });
 
 blogRouter.post('/', async (request, response) => {
-	const blog = new Blog(request.body);
+	const { title, author, likes, url } = request.body;
+	const blog = new Blog({
+		author,
+		likes: likes ?? 0,
+		title,
+		url,
+	});
 
 	const savedBlog = blog.save();
 	response.status(201).json(savedBlog);

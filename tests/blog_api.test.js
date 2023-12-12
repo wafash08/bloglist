@@ -29,22 +29,41 @@ test('of unique identifier of the blog is defined as id', async () => {
 	});
 });
 
-test('succeeds adding new blog', async () => {
-	const newBlog = {
-		author: 'Josh Comeau',
-		likes: 104416,
-		title: 'The End of Front-End Development',
-		url: 'https://www.joshwcomeau.com/blog/the-end-of-frontend-development/',
-	};
-	await api
-		.post('/api/blogs')
-		.send(newBlog)
-		.expect(201)
-		.expect('Content-Type', /application\/json/);
-	const blogs = await blogsInDB();
-	expect(blogs).toHaveLength(INITIAL_BLOGS.length + 1);
-	const titles = blogs.map(b => b.title);
-	expect(titles).toContain(newBlog.title);
+describe('addition of a new blog list', () => {
+	test('succeeds adding a new blog', async () => {
+		const newBlog = {
+			author: 'Josh Comeau',
+			likes: 104416,
+			title: 'The End of Front-End Development',
+			url: 'https://www.joshwcomeau.com/blog/the-end-of-frontend-development/',
+		};
+		await api
+			.post('/api/blogs')
+			.send(newBlog)
+			.expect(201)
+			.expect('Content-Type', /application\/json/);
+		const blogs = await blogsInDB();
+		console.log('blogs >> ', blogs);
+		expect(blogs).toHaveLength(INITIAL_BLOGS.length + 1);
+		const titles = blogs.map(b => b.title);
+		console.log('titles >> ', titles);
+		expect(titles).toContain(newBlog.title);
+	});
+
+	test('succeeds with default likes to 0', async () => {
+		const newBlog = {
+			author: 'Josh Comeau',
+			title: 'The End of Front-End Development',
+			url: 'https://www.joshwcomeau.com/blog/the-end-of-frontend-development/',
+		};
+		await api
+			.post('/api/blogs')
+			.send(newBlog)
+			.expect(201)
+			.expect('Content-Type', /application\/json/);
+		const blogs = await blogsInDB();
+		expect(blogs[blogs.length - 1].likes).toBe(0);
+	});
 });
 
 afterAll(async () => {
