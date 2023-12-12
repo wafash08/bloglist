@@ -75,10 +75,8 @@ export function totalLikes(blogs) {
  */
 export function favoriteBlog(blogs) {
 	const blogWithMostLikes = blogs.sort((a, b) => {
-		const likesOfA = a.likes;
-		const likesOfB = b.likes;
 		// descending
-		return likesOfB - likesOfA;
+		return b.likes - a.likes;
 	});
 
 	return {
@@ -91,7 +89,7 @@ export function favoriteBlog(blogs) {
 /**
  *
  * @param {{title: string, author: string, url: string, likes: number}[]} blogs
- * @returns {{ author: string, blogs: 3}}
+ * @returns {{ author: string, blogs: number}}
  */
 export function mostBlogs(blogs) {
 	const authorsAndBlogs = {};
@@ -143,5 +141,3 @@ export function mostLikes(blogs) {
 	}
 	return authorWithMostLikes;
 }
-
-console.log(mostLikes(BLOGS));
