@@ -20,6 +20,15 @@ test('blogs returned as json', async () => {
 	expect(result.body).toHaveLength(2);
 });
 
+test('of unique identifier of the blog is defined as id', async () => {
+	const result = await api.get('/api/blogs');
+	result.body.forEach(blog => {
+		expect(blog.id).toBeDefined();
+		expect(blog._id).toBeUndefined();
+		expect(blog.__v).toBeUndefined();
+	});
+});
+
 afterAll(async () => {
 	await mongoose.connection.close();
 });
