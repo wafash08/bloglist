@@ -81,6 +81,28 @@ test('succeeds with status 204', async () => {
 	expect(titles).not.toContain(blogToDelete.title);
 });
 
+test('succeeds updating blog', async () => {
+	const blogs = await blogsInDB();
+	const blogToUpdate = blogs[0];
+	const updatedBlog = {
+		...blogToUpdate,
+		likes: 30000,
+	};
+
+	await api.put(`/api/blogs/${blogToUpdate.id}`).send(updatedBlog);
+
+	const blogAfterUpdate = await blogsInDB();
+	expect(blogAfterUpdate).toHaveLength(INITIAL_BLOGS.length);
+
+	const beforeUpdateLikes = blogs.map(b => b.likes);
+	const afterUpdateLikes = blogAfterUpdate.map(b => b.likes);
+
+	console.log('beforeUpdateLikes >> ', beforeUpdateLikes);
+	console.log('afterUpdateLikes >> ', afterUpdateLikes);
+
+	expect(beforeUpdateLikes).not.toContain(afterUpdateLikes);
+});
+
 afterAll(async () => {
 	await mongoose.connection.close();
 });
