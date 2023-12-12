@@ -10,6 +10,13 @@ blogRouter.get('/', async (request, response) => {
 
 blogRouter.post('/', async (request, response) => {
 	const { title, author, likes, url } = request.body;
+
+	if (title === undefined || url === undefined) {
+		return response
+			.status(400)
+			.json({ error: `Field title or url does have to be filled` });
+	}
+
 	const blog = new Blog({
 		author,
 		likes: likes ?? 0,
