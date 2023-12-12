@@ -68,6 +68,19 @@ describe('addition of a new blog list', () => {
 	});
 });
 
+test('succeeds with status 204', async () => {
+	const blogs = await blogsInDB();
+	const blogToDelete = blogs[0];
+
+	await api.delete(`/api/blogs/${blogToDelete.id}`).expect(204);
+
+	const blogsAfterDeletion = await blogsInDB();
+	expect(blogsAfterDeletion).toHaveLength(INITIAL_BLOGS.length - 1);
+
+	const titles = blogsAfterDeletion.map(b => b.title);
+	expect(titles).not.toContain(blogToDelete.title);
+});
+
 afterAll(async () => {
 	await mongoose.connection.close();
 });
