@@ -17,5 +17,5 @@ export const INITIAL_BLOGS = [
 
 export async function blogsInDB() {
 	const blogs = await Blog.find({});
-	return blogs.map(blog => blog.toJSON());
+	return blogs.map(b => b.toJSON());
 }

@@ -49,7 +49,6 @@ describe('favorite blog', () => {
 			likes: 12,
 		};
 		const result = favoriteBlog(BLOGS);
-		console.log('result >> ', result);
 		expect(result).toEqual(blogWithMostLikes);
 	});
 });

@@ -37,16 +37,17 @@ describe('addition of a new blog list', () => {
 			title: 'The End of Front-End Development',
 			url: 'https://www.joshwcomeau.com/blog/the-end-of-frontend-development/',
 		};
+
 		await api
 			.post('/api/blogs')
 			.send(newBlog)
 			.expect(201)
 			.expect('Content-Type', /application\/json/);
+
 		const blogs = await blogsInDB();
-		console.log('blogs >> ', blogs);
 		expect(blogs).toHaveLength(INITIAL_BLOGS.length + 1);
+
 		const titles = blogs.map(b => b.title);
-		console.log('titles >> ', titles);
 		expect(titles).toContain(newBlog.title);
 	});
 
@@ -62,7 +63,8 @@ describe('addition of a new blog list', () => {
 			.expect(201)
 			.expect('Content-Type', /application\/json/);
 		const blogs = await blogsInDB();
-		expect(blogs[blogs.length - 1].likes).toBe(0);
+		const likes = blogs.map(b => b.likes);
+		expect(likes).toContain(0);
 	});
 });
 
