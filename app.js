@@ -4,6 +4,7 @@ import mongoose from 'mongoose';
 import morgan from 'morgan';
 import blogRouter from './controllers/blog.js';
 import { MONGODB_URI } from './utils/config.js';
+import usersRouter from './controllers/users.js';
 
 mongoose.connect(MONGODB_URI);
 
@@ -21,5 +22,6 @@ app.use(
 );
 
 app.use('/api/blogs', blogRouter);
+app.use('/api/users', usersRouter);
 
 export default app;
