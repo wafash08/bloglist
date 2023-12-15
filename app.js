@@ -6,6 +6,7 @@ import blogRouter from './controllers/blog.js';
 import { MONGODB_URI } from './utils/config.js';
 import usersRouter from './controllers/users.js';
 import { errorHandler } from './utils/middleware.js';
+import loginRouter from './controllers/login.js';
 
 mongoose.connect(MONGODB_URI);
 
@@ -24,6 +25,7 @@ app.use(
 
 app.use('/api/blogs', blogRouter);
 app.use('/api/users', usersRouter);
+app.use('/api/login', loginRouter);
 
 app.use(errorHandler);
 
