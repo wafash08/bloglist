@@ -20,7 +20,7 @@ usersRouter.post('/', async (request, response, next) => {
 		const user = new User({ name, username, passwordHash });
 
 		const savedUser = await user.save();
-		response.status(201).json(savedUser);
+		response.status(201).json({ data: savedUser });
 	} catch (error) {
 		next(error);
 	}
@@ -30,7 +30,7 @@ usersRouter.get('/', async (request, response, next) => {
 	try {
 		const users = await User.find({}).populate('blogs');
 
-		response.status(200).json(users);
+		response.status(200).json({ data: users });
 	} catch (error) {
 		next(error);
 	}

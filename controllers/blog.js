@@ -1,62 +1,100 @@
-import { Router } from 'express';
+import express from 'express';
+import jwt from 'jsonwebtoken';
 import { Blog } from '../models/blog.js';
 import { User } from '../models/user.js';
 
+const { Router, Request } = express;
 const blogRouter = Router();
 
-blogRouter.get('/', async (request, response) => {
-	const blogs = await Blog.find({}).populate('user', {
-		username: 1,
-		name: 1,
-	});
-	response.json(blogs);
-});
-
-blogRouter.post('/', async (request, response) => {
-	const { title, author, likes, url, userID } = request.body;
-
-	if (title === undefined || url === undefined) {
-		return response
-			.status(400)
-			.json({ error: `Field title or url does have to be filled` });
+blogRouter.get('/', async (request, response, next) => {
+	try {
+		const blogs = await Blog.find({}).populate('user', {
+			username: 1,
+			name: 1,
+		});
+		response.json({ data: blogs });
+	} catch (error) {
+		next(error);
 	}
-
-	const user = await User.findById(userID);
-
-	const blog = new Blog({
-		author,
-		likes: likes ?? 0,
-		title,
-		url,
-		user: user.id,
-	});
-
-	const savedBlog = await blog.save();
-	user.blogs = user.blogs.concat(savedBlog._id);
-	await user.save();
-	response.status(201).json(savedBlog);
 });
 
-blogRouter.delete('/:id', async (request, response) => {
-	await Blog.findByIdAndDelete(request.params.id);
-	response.status(204).end();
+/**
+ *
+ * @param {Request} request
+ * @returns {string | null}
+ */
+function getTokenFrom(request) {
+	const authorization = request.get('authorization');
+	if (authorization && authorization.startsWith('Bearer ')) {
+		return authorization.replace('Bearer ', '');
+	}
+	return null;
+}
+
+blogRouter.post('/', async (request, response, next) => {
+	try {
+		const { title, author, likes, url } = request.body;
+
+		const decodedToken = jwt.verify(
+			getTokenFrom(request),
+			process.env.SECRET
+		);
+
+		if (!decodedToken.id) {
+			return response.status(401).json({ error: 'token invalid' });
+		}
+
+		if (title === undefined || url === undefined) {
+			return response
+				.status(400)
+				.json({ error: `Field title or url does have to be filled` });
+		}
+
+		const user = await User.findById(decodedToken.id);
+		const blog = new Blog({
+			author,
+			likes: likes ?? 0,
+			title,
+			url,
+			user: user._id,
+		});
+		const savedBlog = await blog.save();
+		user.blogs = user.blogs.concat(savedBlog._id);
+		await user.save();
+		response.status(201).json({ data: savedBlog });
+	} catch (error) {
+		next(error);
+	}
 });
 
-blogRouter.put('/:id', async (request, response) => {
-	const id = request.params.id;
-	const { author, likes, title, url } = request.body;
+blogRouter.delete('/:id', async (request, response, next) => {
+	try {
+		await Blog.findByIdAndDelete(request.params.id);
+		response.status(204).end();
+	} catch (error) {
+		next(error);
+	}
+});
 
-	const newBlog = {
-		author,
-		likes,
-		title,
-		url,
-	};
+blogRouter.put('/:id', async (request, response, next) => {
+	try {
+		const id = request.params.id;
+		const { author, likes, title, url } = request.body;
 
-	const updatedBlog = await Blog.findByIdAndUpdate(id, newBlog, {
-		new: true,
-	});
-	response.json(updatedBlog);
+		const newBlog = {
+			author,
+			likes,
+			title,
+			url,
+		};
+
+		const updatedBlog = await Blog.findByIdAndUpdate(id, newBlog, {
+			new: true,
+		});
+		response.json(updatedBlog);
+	} catch (error) {
+		next(error);
+	}
 });
 
 export default blogRouter;
