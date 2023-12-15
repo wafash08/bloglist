@@ -1,4 +1,5 @@
-import { Blog } from '../models/blog';
+import { Blog } from '../models/blog.js';
+import { User } from '../models/user.js';
 
 export const INITIAL_BLOGS = [
 	{
@@ -18,4 +19,22 @@ export const INITIAL_BLOGS = [
 export async function blogsInDB() {
 	const blogs = await Blog.find({});
 	return blogs.map(b => b.toJSON());
+}
+
+export const INITIAL_USERS = [
+	{
+		name: 'Lulu',
+		username: 'lulu',
+		password: '1234',
+	},
+	{
+		name: 'Wafi',
+		username: 'wafi',
+		password: '1234',
+	},
+];
+
+export async function usersInDB() {
+	const users = await User.find({});
+	return users.map(u => u.toJSON());
 }
