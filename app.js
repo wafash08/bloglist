@@ -5,7 +5,7 @@ import morgan from 'morgan';
 import blogRouter from './controllers/blog.js';
 import { MONGODB_URI } from './utils/config.js';
 import usersRouter from './controllers/users.js';
-import { errorHandler } from './utils/middleware.js';
+import { errorHandler, tokenExtractor } from './utils/middleware.js';
 import loginRouter from './controllers/login.js';
 
 mongoose.connect(MONGODB_URI);
@@ -22,6 +22,7 @@ app.use(
 		':method :url :status :res[content-length] - :response-time ms :blog'
 	)
 );
+app.use(tokenExtractor);
 
 app.use('/api/blogs', blogRouter);
 app.use('/api/users', usersRouter);
