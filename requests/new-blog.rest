@@ -1,8 +1,9 @@
-POST http://localhost:3003/api/blogs HTTP/1.1
+POST http://localhost:8080/api/blogs HTTP/1.1
 content-type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IndhZmEiLCJpZCI6IjY1N2M5MDlmYWU3OTIyNjVjYWNjNjFhZiIsImlhdCI6MTcwMjc0MDQ3MH0.t9lFYEGUBgVTTsn4UwRFdNA7K5KtHSs0Ahe3FZgGkgY
 
 {
-    "name": "An Interactive Guide to CSS Grid",
+    "title": "An Interactive Guide to CSS Grid",
     "author": "Josh Comeau",
     "url": "https://www.joshwcomeau.com/css/interactive-guide-to-grid/",
     "likes": 28403

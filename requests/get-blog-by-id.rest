@@ -1,0 +1,1 @@
+GET http://localhost:8080/api/blogs/657dc2368105c8c35d576a8e HTTP/1.1

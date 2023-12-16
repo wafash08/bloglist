@@ -18,6 +18,18 @@ blogRouter.get('/', async (request, response, next) => {
 	}
 });
 
+blogRouter.get('/:id', async (request, response, next) => {
+	try {
+		const blog = await Blog.findById(request.params.id).populate('user', {
+			username: 1,
+			name: 1,
+		});
+		response.json({ data: blog });
+	} catch (error) {
+		next(error);
+	}
+});
+
 blogRouter.post('/', userExtractor, async (request, response, next) => {
 	try {
 		const { title, author, likes, url } = request.body;
@@ -54,6 +66,12 @@ blogRouter.delete('/:id', userExtractor, async (request, response, next) => {
 	try {
 		const blog = await Blog.findById(request.params.id);
 		const authorizedUser = request.user;
+
+		if (!blog) {
+			return response
+				.status(404)
+				.json({ error: 'Blog you are going to delete is not found' });
+		}
 
 		if (blog.user.toString() !== authorizedUser.id) {
 			return response.status(401).json({
