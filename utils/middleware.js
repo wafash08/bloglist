@@ -1,3 +1,5 @@
+import jwt from 'jsonwebtoken';
+
 export function errorHandler(error, request, response, next) {
 	console.error(error.message);
 
@@ -30,5 +32,17 @@ export function tokenExtractor(request, response, next) {
 	} else {
 		request.token = null;
 	}
+	next();
+}
+
+export function userExtractor(request, response, next) {
+	const authorizedUser = jwt.verify(request.token, process.env.SECRET);
+
+	if (authorizedUser) {
+		request.user = authorizedUser;
+	} else {
+		request.user = null;
+	}
+
 	next();
 }

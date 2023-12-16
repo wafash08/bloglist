@@ -1,7 +1,7 @@
 import express from 'express';
-import jwt from 'jsonwebtoken';
 import { Blog } from '../models/blog.js';
 import { User } from '../models/user.js';
+import { userExtractor } from '../utils/middleware.js';
 
 const { Router } = express;
 const blogRouter = Router();
@@ -18,13 +18,12 @@ blogRouter.get('/', async (request, response, next) => {
 	}
 });
 
-blogRouter.post('/', async (request, response, next) => {
+blogRouter.post('/', userExtractor, async (request, response, next) => {
 	try {
 		const { title, author, likes, url } = request.body;
+		const authorizedUser = request.user;
 
-		const decodedToken = jwt.verify(request.token, process.env.SECRET);
-
-		if (!decodedToken.id) {
+		if (!authorizedUser.id) {
 			return response.status(401).json({ error: 'token invalid' });
 		}
 
@@ -34,7 +33,7 @@ blogRouter.post('/', async (request, response, next) => {
 				.json({ error: `Field title or url does have to be filled` });
 		}
 
-		const user = await User.findById(decodedToken.id);
+		const user = await User.findById(authorizedUser.id);
 		const blog = new Blog({
 			author,
 			likes: likes ?? 0,
@@ -51,10 +50,10 @@ blogRouter.post('/', async (request, response, next) => {
 	}
 });
 
-blogRouter.delete('/:id', async (request, response, next) => {
+blogRouter.delete('/:id', userExtractor, async (request, response, next) => {
 	try {
 		const blog = await Blog.findById(request.params.id);
-		const authorizedUser = jwt.verify(request.token, process.env.SECRET);
+		const authorizedUser = request.user;
 
 		if (blog.user.toString() !== authorizedUser.id) {
 			return response.status(401).json({
