@@ -3,7 +3,7 @@ import jwt from 'jsonwebtoken';
 import { Blog } from '../models/blog.js';
 import { User } from '../models/user.js';
 
-const { Router, Request } = express;
+const { Router } = express;
 const blogRouter = Router();
 
 blogRouter.get('/', async (request, response, next) => {
@@ -53,6 +53,15 @@ blogRouter.post('/', async (request, response, next) => {
 
 blogRouter.delete('/:id', async (request, response, next) => {
 	try {
+		const blog = await Blog.findById(request.params.id);
+		const authorizedUser = jwt.verify(request.token, process.env.SECRET);
+
+		if (blog.user.toString() !== authorizedUser.id) {
+			return response.status(401).json({
+				error: 'You are not authorized for deleting this blog',
+			});
+		}
+
 		await Blog.findByIdAndDelete(request.params.id);
 		response.status(204).end();
 	} catch (error) {
