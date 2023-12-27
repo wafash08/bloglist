@@ -2,16 +2,16 @@ import express from 'express';
 import { Blog } from '../models/blog.js';
 import { User } from '../models/user.js';
 import { userExtractor } from '../utils/middleware.js';
+import { Comment } from '../models/comment.js';
 
 const { Router } = express;
 const blogRouter = Router();
 
 blogRouter.get('/', async (request, response, next) => {
 	try {
-		const blogs = await Blog.find({}).populate('user', {
-			username: 1,
-			name: 1,
-		});
+		const blogs = await Blog.find({})
+			.populate({ path: 'user', select: ['username', 'name'] })
+			.populate({ path: 'comments', select: 'comment' });
 		response.json({ data: blogs });
 	} catch (error) {
 		next(error);
@@ -20,10 +20,9 @@ blogRouter.get('/', async (request, response, next) => {
 
 blogRouter.get('/:id', async (request, response, next) => {
 	try {
-		const blog = await Blog.findById(request.params.id).populate('user', {
-			username: 1,
-			name: 1,
-		});
+		const blog = await Blog.findById(request.params.id)
+			.populate({ path: 'user', select: ['username', 'name'] })
+			.populate({ path: 'comments', select: 'comment' });
 		response.json({ data: blog });
 	} catch (error) {
 		next(error);
@@ -57,6 +56,24 @@ blogRouter.post('/', userExtractor, async (request, response, next) => {
 		user.blogs = user.blogs.concat(savedBlog._id);
 		await user.save();
 		response.status(201).json({ data: savedBlog });
+	} catch (error) {
+		next(error);
+	}
+});
+
+blogRouter.post('/:id/comments', async (request, response, next) => {
+	try {
+		const blogID = request.params.id;
+		const body = request.body;
+		const comment = new Comment({
+			comment: body.comment,
+			blog: blogID,
+		});
+		const savedComment = await comment.save();
+		const blog = await Blog.findById(blogID);
+		blog.comments = blog.comments.concat(savedComment._id);
+		await blog.save();
+		response.status(201).json({ data: savedComment });
 	} catch (error) {
 		next(error);
 	}
