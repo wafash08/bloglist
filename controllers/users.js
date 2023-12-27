@@ -36,6 +36,15 @@ usersRouter.get('/', async (request, response, next) => {
 	}
 });
 
+usersRouter.get('/:id', async (request, response, next) => {
+	try {
+		const user = await User.findById(request.params.id).populate('blogs');
+		return response.status(200).json({ data: user });
+	} catch (error) {
+		next(error);
+	}
+});
+
 usersRouter.delete('/:id', async (request, response, next) => {
 	try {
 		await User.findByIdAndDelete(request.params.id);
