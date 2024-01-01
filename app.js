@@ -15,6 +15,7 @@ const app = express();
 
 app.use(cors());
 app.use(express.json());
+app.use(express.static('dist'));
 morgan.token('blog', (req, res) => {
 	return JSON.stringify(req.body);
 });
